@@ -1,5 +1,8 @@
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors');
+const bodyParser = require('body-parser')
+
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -18,6 +21,8 @@ connection.connect((err)=>{
 
 const app = express();
 
+app.use(bodyParser.json())
+app.use(cors())
 
 app.get('/', (req,res)=>{
     res.send("Main domain");
@@ -59,12 +64,16 @@ app.get('/getUserByPhone/:phone', (req,res)=>{
    
     connection.query(`select * from Users WHERE phone_number = ${req.params['phone']}`, (err,result,fields)=>{
 
-        if(result.length > 0){
-            res.status(200)
-            res.send(result);
-        }else{
-            res.status(204)
-            res.send("Нет записей");
+        try{
+            if(result.length > 0){
+                res.status(200)
+                res.send(result);
+            }else{
+                res.status(204)
+                res.send(result);
+            }
+        }catch(er){
+            
         }
 
   
@@ -90,5 +99,31 @@ app.get('/getUserById/:id', (req,res)=>{
     })
 })
 
+app.post('/registrate', (req,res)=>{
+    console.log(req.body)
 
+    // connection.query("insert into User values(0,)", (err,result,fields)=>{
+    //     console.log(err);
+    //     console.log(result);
+
+    //     let response = {
+    //         err,
+    //         result,
+    //     }
+    //     res.send(response);
+    // })
+})
+
+app.get('/getCities', (req,res)=>{
+    connection.query("select * from Cities", (err,result,fields)=>{
+        console.log(err);
+        // console.log(result);
+
+        let response = {
+            err,
+            result,
+        }
+        res.send(response);
+    })
+})
 app.listen(3050);
