@@ -101,17 +101,18 @@ app.get('/getUserById/:id', (req,res)=>{
 
 app.post('/registrate', (req,res)=>{
     console.log(req.body)
+    let newUser = req.body;
 
-    // connection.query("insert into User values(0,)", (err,result,fields)=>{
-    //     console.log(err);
-    //     console.log(result);
+    connection.query(`insert into Users(phone_number,password,user_name,gender,city,birth_date,about,height,weight) values("${newUser.login}","${newUser.password}","${newUser.name}","${newUser.gender}",${newUser.city},"${newUser.birthDate}","${newUser.about}",${newUser.height},${newUser.weight})`, (err,result,fields)=>{
+        console.log(err);
+        console.log(result);
 
-    //     let response = {
-    //         err,
-    //         result,
-    //     }
-    //     res.send(response);
-    // })
+        let response = {
+            err,
+            result,
+        }
+        res.send(response);
+    })
 })
 
 app.get('/getCities', (req,res)=>{
