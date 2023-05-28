@@ -129,17 +129,19 @@ app.post("/registrate", (req, res) => {
         err,
         result,
       };
-      let uniqImgId = uuid();//создание уникального id для фотографий
+      let uniqImgId = uuid(); //создание уникального id для фотографий
 
-      image.mv( //перемещение полученной от клиента фотографии в директорию /photos
+      image.mv(
+        //перемещение полученной от клиента фотографии в директорию /photos
         __dirname +
           "/photos/" +
           uniqImgId +
           "." +
           image.name.split(".")[image.name.split(".").length - 1]
       );
-      
-      connection.query( //добавление записи о загруженной фотографии в базу данных
+
+      connection.query(
+        //добавление записи о загруженной фотографии в базу данных
         `insert into ProfilePhotos(file_path,on_avatar,id_user) values ("${
           "/photos/" +
           uniqImgId +
@@ -231,4 +233,39 @@ app.post("/markAsViewed", (req, res) => {
     }
   );
 });
+
+app.get("/getSympathies/:id", (req, res) => {
+  console.log(req.params);
+  connection.query(
+    `SELECT user_name, file_path, id_sympathy FROM dating_db.sympathies, dating_db.users, dating_db.profilephotos
+    WHERE id_sender = users.id_user AND profilephotos.id_user = users.id_user AND id_receiver = ${req.params["id"]} AND is_received = 0`,
+    (err, result, fields) => {
+      console.log(result);
+
+      try {
+        res.send(result);
+      } catch (er) {
+        res.send("#");
+      }
+      let response = {
+        err,
+        result,
+      };
+    }
+  );
+});
+
+app.put("/sympReceived/:id", (req, res) => {
+  console.log(req.params);
+  connection.query(
+    `update sympathies set is_received = 1 where id_sympathy = ${req.params["id"]}`,
+    (err, result, field) => {
+      res.send({
+        err,
+        result,
+      });
+    }
+  );
+});
+
 app.listen(3050);
