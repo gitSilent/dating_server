@@ -268,4 +268,16 @@ app.put("/sympReceived/:id", (req, res) => {
   );
 });
 
+app.post("/addSympathy", (req,res)=>{ // req.body: id_sender, id_receiver
+  console.log(req.body);
+  connection.query(
+    `insert into sympathies (id_sender,id_receiver,is_received) values (${req.body["id_sender"]},${req.body["id_receiver"]},0)`,
+    (err,result,field)=>{
+      res.send({
+        err,result
+      });
+    }
+  )
+})
+
 app.listen(3050);
